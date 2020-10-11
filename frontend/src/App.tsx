@@ -6,28 +6,34 @@ import { LandingPage } from "./pages/Landing";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import { SignedInPage } from "./pages/SignedIn";
+import { PageLoading } from "./components/PageLoading";
 
 function App() {
 
   const { session, handlePendingSignIn } = useBSSession();
 
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     if(!session.isUserSignedIn() && session.isSignInPending()) {
-      handlePendingSignIn();
+      setLoading(true);
+      handlePendingSignIn().finally(() => setLoading(false));
     }
   }, []);
 
   return (
-    <div>
-      <Header />
-      <main>
-        {session.isUserSignedIn()
-          ? <SignedInPage />
-          : <LandingPage />
-        }
-      </main>
-      <Footer />
-    </div>
+    <PageLoading show={loading}>
+      <div>
+        <Header />
+        <main>
+          {session.isUserSignedIn()
+            ? <SignedInPage />
+            : <LandingPage />
+          }
+        </main>
+        <Footer />
+      </div>
+    </PageLoading>
   );
 }
 
