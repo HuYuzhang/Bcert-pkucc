@@ -14,8 +14,6 @@
 	撤回一组交易		revoke-certificates -c PKU_2020_Graduates/config.ini -b 4b8f6b08e9cb38c7954798e355d769e804801a6604cb41433286d84bcba887d4
 	撤回颁发地址		revoke-certificates -c PKU_2021_Graduates/config.ini -s
 
-Tx hash: 5dcf63d50f5beb5f266272800cafef6595c1279ecc34b9c7222810b57f259221
-
 启动前端
 	启动IPFS、btcd、blockstack
 	进入虚拟环境		source new_py3_env/bin/activate
