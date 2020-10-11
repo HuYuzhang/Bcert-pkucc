@@ -1,24 +1,17 @@
-import React, { Component } from "react";
+import React, { } from "react";
 import "./Landing.css";
-import { Header } from "./Header";
 import { VerifyCert } from "./VerifyCert";
 import { DownloadCert } from "./DownloadCert";
-import { Footer } from "./Footer";
 import { Introduction } from "./Introduction";
 
-class Landing extends Component {
+export const LandingPage: React.FC = () => {
 
-  render() {
-    return (
-      <div>
-        <Header />
-        <VerifyCert />
-        <DownloadCert />
-        <Introduction />
-        <Footer />
-      </div>
-    );
-  }
-}
+  return (
+    <div>
+      <VerifyCert />
+      <DownloadCert />
+      <Introduction />
+    </div>
+  );
+};
 
-export default Landing;

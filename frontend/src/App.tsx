@@ -1,35 +1,33 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter, useHistory } from "react-router-dom";
 import { BlockstackSessionStore, useBSSession } from "./stores/BlockstackSessionStore";
 import { createStore, StoreProvider } from "simstate";
-import Landing from "./pages/Landing";
+import { LandingPage } from "./pages/Landing";
+import { Header } from "./components/Header/Header";
+import { Footer } from "./components/Footer";
+import { SignedInPage } from "./pages/SignedIn";
 
 function App() {
 
-  const session = useBSSession();
-  const history = useHistory();
+  const { session, handlePendingSignIn } = useBSSession();
 
   useEffect(() => {
     if(!session.isUserSignedIn() && session.isSignInPending()) {
-      session.handlePendingSignIn()
-        .then((userData) => {
-          if(!userData.username) {
-            throw new Error("This app requires a username.");
-          }
-          history.push(`/kingdom/${userData.username}`);
-        });
+      handlePendingSignIn();
     }
   }, []);
 
   return (
-    <main>
-      {session.isUserSignedIn()
-        // ? <SignedIn />
-        ? "logged in"
-        : <Landing />
-
-      }
-    </main>
+    <div>
+      <Header />
+      <main>
+        {session.isUserSignedIn()
+          ? <SignedInPage />
+          : <LandingPage />
+        }
+      </main>
+      <Footer />
+    </div>
   );
 }
 
