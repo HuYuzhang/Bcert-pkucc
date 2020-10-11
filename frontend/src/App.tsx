@@ -3,7 +3,7 @@ import { BrowserRouter, useHistory } from "react-router-dom";
 import { BlockstackSessionStore, useBSSession } from "./stores/BlockstackSessionStore";
 import { createStore, StoreProvider } from "simstate";
 import { LandingPage } from "./pages/Landing";
-import { Header } from "./components/Header/Header";
+import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import { SignedInPage } from "./pages/SignedIn";
 

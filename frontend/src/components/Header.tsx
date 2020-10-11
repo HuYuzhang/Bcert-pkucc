@@ -1,53 +1,70 @@
 import { useBSSession } from "src/stores/BlockstackSessionStore";
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import {
+  Collapse,
+  Navbar,
+  NavbarToggler,
+  NavbarBrand,
+  Nav,
+  NavItem,
+} from "reactstrap";
 
 export const Header: React.FC = () => {
 
   const { session, signOut } = useBSSession();
 
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggle = () => setIsOpen(!isOpen);
+
   return (
-    <nav className="navbar navbar-expand-md navbar-dark bg-blue fixed-top">
-      <Link className="navbar-brand" to="/">PKU Cert Centre</Link>
-      <div className="collapse navbar-collapse" id="navbarsExampleDefault">
-        <ul className="navbar-nav mr-auto">
-          <li className="nav-item">
+    <Navbar expand="md" dark color="blue" fixed="top">
+      <NavbarBrand>
+        <Link className="navbar-brand" to="/">
+          PKU Cert Centre
+        </Link>
+      </NavbarBrand>
+      <NavbarToggler onClick={toggle} />
+      <Collapse isOpen={isOpen} navbar className="justify-content-between">
+        <Nav navbar>
+          <NavItem>
             <Link className="nav-link" to="/">网站首页</Link>
-          </li>
-          <li className="nav-item">
+          </NavItem>
+          <NavItem>
             <Link className="nav-link" to="/">关于我们</Link>
-          </li>
-        </ul>
-        <ul className="navbar-nav mr-auto">
+          </NavItem>
+        </Nav>
+        <Nav navbar>
           {
             session.isUserSignedIn()
               ? (
                 <>
-                  <li className="nav-item">
+                  <NavItem>
                     <a className="nav-link pointer">
                       {session.loadUserData().username}
                     </a>
-                  </li>
-                  <li className="nav-item">
+                  </NavItem>
+                  <NavItem>
                     <a className="nav-link pointer" onClick={signOut}>
                       登出
                     </a>
-                  </li>
+                  </NavItem>
                 </>
 
               ) : (
-                <li className="nav-item">
+                <NavItem>
                   <a
                     className="nav-link pointer"
                     onClick={() => session.redirectToSignIn()}
                   >
                     使用BlockStack ID登录
                   </a>
-                </li>
+                </NavItem>
               )
           }
-        </ul>
-      </div>
-    </nav>
+        </Nav>
+      </Collapse>
+    </Navbar>
   );
 };
