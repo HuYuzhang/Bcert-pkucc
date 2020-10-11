@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter, useHistory } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import { BlockstackSessionStore, useBSSession } from "./stores/BlockstackSessionStore";
 import { createStore, StoreProvider } from "simstate";
 import { LandingPage } from "./pages/Landing";
@@ -17,7 +17,9 @@ function App() {
   useEffect(() => {
     if(!session.isUserSignedIn() && session.isSignInPending()) {
       setLoading(true);
-      handlePendingSignIn().finally(() => setLoading(false));
+      handlePendingSignIn().finally(() => {
+        setLoading(false);
+      });
     }
   }, []);
 

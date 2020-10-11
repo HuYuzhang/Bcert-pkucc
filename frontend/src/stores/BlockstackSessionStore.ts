@@ -24,6 +24,14 @@ export function BlockstackSessionStore() {
     } else {
       refresh();
     }
+
+    // remove the querystring
+    if (window !== undefined) {
+      const path = window.location.href;
+      const noQuerystring = path.split("?")[0];
+      window.history.pushState({}, document.title, noQuerystring);
+    }
+
   }, []);
 
   return {
