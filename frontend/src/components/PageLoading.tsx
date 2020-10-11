@@ -1,5 +1,4 @@
 import React from "react";
-import { Spinner } from "reactstrap";
 import "./PageLoading.css";
 
 export interface Props {
