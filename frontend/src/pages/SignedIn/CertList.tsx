@@ -1,5 +1,6 @@
 import React from "react";
 import { useBSSession } from "src/stores/BlockstackSessionStore";
+import { UserInfo } from "./UserInfo";
 
 export const CertList: React.FC = () => {
 
@@ -9,6 +10,9 @@ export const CertList: React.FC = () => {
 
   return (
     <div className="row ruler">
+      <div className="col-lg-12">
+        <UserInfo />
+      </div>
       <div className="col-lg-12">
         <h2>Student {username}</h2>
 
