@@ -4,7 +4,7 @@ from blockcert.validate_certificates import validate_certificate,get_issuer_addr
 from blockcert import network_utils
 import json
 from flask_cors import *
-from . import app
+from app import app
 from PyPDF2 import PdfFileReader
 from pprint import pprint
 
