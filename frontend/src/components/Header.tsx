@@ -1,5 +1,5 @@
 import { useBSSession } from "src/stores/BlockstackSessionStore";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Collapse,
@@ -8,18 +8,45 @@ import {
   NavbarBrand,
   Nav,
   NavItem,
+  Popover,
+  PopoverBody,
+  Tooltip,
+  Button,
 } from "reactstrap";
+import { copy } from "src/utils/copy";
+
+const CopyPublicKeyLink: React.FC<{ getPublicKey: () => string }>
+= ({ getPublicKey }) => {
+
+  const handleClick = useCallback(() => {
+    const key = getPublicKey();
+    const result = copy(key);
+    alert(result ? "复制成功！" : "复制失败！");
+  }, [getPublicKey]);
+
+
+  return (
+    <span>
+      <Button
+        id="copyPublicKey"
+        onClick={handleClick}
+      >
+        复制公钥
+      </Button>
+    </span>
+  );
+};
 
 export const Header: React.FC = () => {
 
-  const { session, signOut } = useBSSession();
+  const { session, signOut, getPublicKey } = useBSSession();
 
   const [isOpen, setIsOpen] = useState(false);
 
   const toggle = () => setIsOpen(!isOpen);
 
   return (
-    <Navbar expand="md" dark color="blue" fixed="top">
+    <Navbar expand="md" dark color="blue">
       <NavbarBrand>
         <Link className="navbar-brand" to="/">
           PKU Cert Centre
@@ -44,6 +71,9 @@ export const Header: React.FC = () => {
                     <a className="nav-link pointer">
                       {session.loadUserData().username}
                     </a>
+                  </NavItem>
+                  <NavItem>
+                    <CopyPublicKeyLink getPublicKey={getPublicKey} />
                   </NavItem>
                   <NavItem>
                     <a className="nav-link pointer" onClick={signOut}>

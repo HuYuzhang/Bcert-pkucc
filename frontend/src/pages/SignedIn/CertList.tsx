@@ -1,6 +1,5 @@
 import React from "react";
 import { useBSSession } from "src/stores/BlockstackSessionStore";
-import { UserInfo } from "./UserInfo";
 
 export const CertList: React.FC = () => {
 
@@ -9,18 +8,14 @@ export const CertList: React.FC = () => {
   const { username } = session.loadUserData();
 
   return (
-    <div className="row ruler">
-      <div className="col-lg-12">
-        <UserInfo />
-      </div>
-      <div className="col-lg-12">
-        <h2>Student {username}</h2>
+    <div className="col-lg-12">
+      <h2>Student {username}</h2>
 
-        <p>
-          {username} has certificates:
-        </p>
+      <p>
+        {username} has certificates:
+      </p>
 
-        {/* <p>
+      {/* <p>
           {data.map((person, index) => {
             if (person.id === name){
               return (
@@ -33,7 +28,6 @@ export const CertList: React.FC = () => {
             }
           })}
         </p> */}
-      </div>
     </div>
   );
 };

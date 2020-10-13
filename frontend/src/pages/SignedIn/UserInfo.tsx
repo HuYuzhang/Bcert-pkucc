@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { useBSSession } from "src/stores/BlockstackSessionStore";
 import { getPublicKeyFromPrivate } from "blockstack";
-import { Button } from "reactstrap";
+import { Button, Card, CardBody, CardText, CardTitle } from "reactstrap";
 
 import { decrypt, PrivateKey } from "eciesjs";
 
@@ -45,12 +45,26 @@ export const UserInfo: React.FC = () => {
 
   };
 
+  const copyPublicKey = () => {
+    const input = document.createElement("textarea");
+    input.innerHTML = publicKey;
+    document.body.appendChild(input);
+    input.select();
+    document.execCommand("copy");
+    document.body.removeChild(input);
+  };
+
   return (
-    <div>
-      您的用户ID：{username} <br/>
-      您的App Private Key：{appPrivateKey} <br/>
-      您的App Public Key：{publicKey} <br/>
-      <Button onClick={onClick}>Test</Button>
-    </div>
+    <Card>
+      <CardTitle>我的信息</CardTitle>
+      <CardBody>
+        <CardText>
+          您的用户ID：{username} <br/>
+        </CardText>
+        <Button onClick={copyPublicKey}>
+          复制公钥
+        </Button>
+      </CardBody>
+    </Card>
   );
 };

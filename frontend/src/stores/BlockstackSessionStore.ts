@@ -1,4 +1,4 @@
-import { UserSession } from "blockstack";
+import { getPublicKeyFromPrivate, UserSession } from "blockstack";
 import { useCallback, useRef, useState } from "react";
 import { appConfig } from "src/utils/constants";
 import { useStore } from "simstate";
@@ -16,6 +16,10 @@ export function BlockstackSessionStore() {
     session.signUserOut();
     refresh();
   }, []);
+
+  const getPublicKey = () => {
+    return getPublicKeyFromPrivate(session.loadUserData().appPrivateKey);
+  };
 
   const handlePendingSignIn = useCallback(async () => {
     const userData = await session.handlePendingSignIn();
@@ -38,6 +42,7 @@ export function BlockstackSessionStore() {
     session: useRef(session).current,
     signOut,
     handlePendingSignIn,
+    getPublicKey,
   };
 }
 
