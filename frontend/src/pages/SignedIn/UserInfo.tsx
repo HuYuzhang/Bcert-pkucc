@@ -1,8 +1,6 @@
 import React, { useMemo } from "react";
 import { useBSSession } from "src/stores/BlockstackSessionStore";
-import { ec as EC } from "elliptic";
-
-const ec = new EC("secp256k1");
+import { getPublicKeyFromPrivate } from "blockstack";
 
 export const UserInfo: React.FC = () => {
   const { session } = useBSSession();
@@ -10,7 +8,7 @@ export const UserInfo: React.FC = () => {
   const { username, appPrivateKey } = session.loadUserData();
 
   const publicKey = useMemo(() =>
-    ec.keyFromPrivate(appPrivateKey).getPublic("hex"), [appPrivateKey]);
+    getPublicKeyFromPrivate(appPrivateKey), [appPrivateKey]);
 
   return (
     <div>
