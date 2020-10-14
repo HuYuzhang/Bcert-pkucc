@@ -8,24 +8,37 @@ from app import app
 from PyPDF2 import PdfFileReader
 from pprint import pprint
 
+api_root = "bcert.pku.edu.cn"
+
+btcd_url = f"https://jasmin3q:123456@{api_root}:18334"
+
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 @cross_origin()
 def index(path):
     return render_template('index.html')
 
+# 没连接上btcd，所以先去掉了……
+conf = {
+    'blockchain_services': { "services": [ { "blockcypher":{} } ], "required_successes": 1 },
+    #'blockchain_services': { "services": [ { "blockcypher":{} }, { "btcd": { "full_url": btcd_url }} ], "required_successes": 2 },
+    'config':'PKU_2020_Graduates/config.ini', 
+    'full_node_rpc_password':'123456', 
+    'full_node_rpc_user':'jasmin3q',
+    'issuer_identifier':'UNicDC',
+    'testnet':True,
+}
+
 @app.route('/upload',methods=['post'])
 @cross_origin()
 def upload():
 
-    conf = {'blockchain_services':'{ "services": [ { "blockcypher":{} }, { "btcd": { "full_url": "https://jasmin3q:123456@127.0.0.1:18334"} } ], "required_successes": 2 }', 'config':'PKU_2020_Graduates/config.ini',  'full_node_rpc_password':'123456', 'full_node_rpc_user':'jasmin3q', 'issuer_identifier':'UNicDC', 'testnet':True}
-    #cert='/home/jasmine/blockchain-certificates/PKU_2020_Graduates/certificates/Alice.pdf'
     try:
        certname = request.files['file'].filename
        cert = request.files.get('file')
-       url = '/home/jasmine/webserver/backend/static/certificates/tmp/'+certname
+       url = 'upload/tmp/'+certname
        cert.save(url)
-       valid, reason = validate_certificate(url, conf['issuer_identifier'],conf['testnet'],json.loads(conf['blockchain_services']))
+       valid, reason = validate_certificate(url, conf['issuer_identifier'],conf['testnet'],conf['blockchain_services'])
     except:
        return render_template('uploadfail.html',state='认证失败！',reason='请检查您是否上传了正确的文件或联系网站管理人员。')
     else:
@@ -72,11 +85,10 @@ def upload():
 def verify():
     print("verify")
     url = request.values.get('url') #获取参数
-    conf = {'blockchain_services':'{ "services": [ { "blockcypher":{} }, { "btcd": { "full_url": "https://jasmin3q:123456@127.0.0.1:18334"} } ], "required_successes": 2 }', 'config':'PKU_2020_Graduates/config.ini',  'full_node_rpc_password':'123456', 'full_node_rpc_user':'jasmin3q', 'issuer_identifier':'UNicDC', 'testnet':True}
     cert = url
     #cert='/home/jasmine/blockchain-certificates/PKU_2020_Graduates/certificates/Alice.pdf'
     try:
-       valid, reason = validate_certificate(cert, conf['issuer_identifier'],conf['testnet'],json.loads(conf['blockchain_services']))
+       valid, reason = validate_certificate(cert, conf['issuer_identifier'],conf['testnet'],conf['blockchain_services'])
     except:
        return '认证失败！url错误或服务器异常'
     else:    
