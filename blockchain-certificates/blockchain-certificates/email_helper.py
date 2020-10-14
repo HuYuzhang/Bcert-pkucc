@@ -28,4 +28,3 @@ def send_cert_email(receiver: str, receiver_name: str, hash: str):
     finally:
         smtp.quit()
     
-    

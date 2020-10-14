@@ -14,7 +14,7 @@ from . import pdf_utils
 from . import publish_hash
 from . import cred_protocol
 import ecies
-from .email import send_cert_email
+from .email_helper import send_cert_email
 
 
 '''
