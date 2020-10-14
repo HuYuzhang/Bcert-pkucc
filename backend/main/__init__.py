@@ -17,7 +17,7 @@ pathlib.Path(upload_path).mkdir(exist_ok=True)
 
 api_root = "bcert.pku.edu.cn"
 
-btcd_url = f"https://jasmin3q:123456@{api_root}:18334"
+btcd_url = f"https://jasmin3q:123456@{api_root}/btcd"
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
@@ -27,8 +27,8 @@ def index(path):
 
 # 没连接上btcd，所以先去掉了……
 conf = {
-    'blockchain_services': { "services": [ { "blockcypher":{} } ], "required_successes": 1 },
-    #'blockchain_services': { "services": [ { "blockcypher":{} }, { "btcd": { "full_url": btcd_url }} ], "required_successes": 2 },
+    # 'blockchain_services': { "services": [ { "blockcypher":{} } ], "required_successes": 1 },
+    'blockchain_services': { "services": [ { "blockcypher":{} }, { "btcd": { "full_url": btcd_url }} ], "required_successes": 2 },
     'config':'PKU_2020_Graduates/config.ini', 
     'full_node_rpc_password':'123456', 
     'full_node_rpc_user':'jasmin3q',
