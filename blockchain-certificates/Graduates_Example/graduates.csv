@@ -1,8 +1,2 @@
-name,email,major,degree,date,did
-刘婷,1838734178@qq.com,信息工程,本科,2020.5.20,lt971001.id.blockstack
-许越,1030069822@qq.com,信息工程,本科,2020.5.20,xuyue11.id.blockstack
-时旻,591723734@qq.com,信息工程,本科,2020.5.20,jasmin3q.id.blockstack
-许杰,834527910@qq.com,信息工程,本科,2020.5.20,dearmj.id.blockstack
-杨蓉,1120388304@qq.com,信息工程,本科,2020.5.20,yarn.id.blockstack
-高霞,2447296028@qq.com,信息工程,本科,2020.5.20,gx123.id.blockstack
-张三,630740935@qq.com,信息工程,本科,2020.5.20,zhangsan.id.blockstack
+name,email,major,degree,date,did,public_key
+陈俊达,ddadaal@outlook.com,软件工程,本科,20205.20,ddadaal98.id.blockstack,03e10e8c2c33d2c7134de2a3628799f4cc6182eeaa8027dc3195d1387b2ecca043

@@ -13,6 +13,7 @@ from blockchain_certificates.chainpoint import ChainPointV2
 from blockchain_certificates import pdf_utils
 from blockchain_certificates import publish_hash
 from blockchain_certificates import cred_protocol
+import ecies
 
 
 '''
@@ -120,14 +121,25 @@ def create_certificates(conf, interactive=False):
         csv_file = os.path.join(conf.working_directory, conf.csv_file)
         pdfdata = pdf_utils._process_csv(csv_file)
         for user in pdfdata:
-            #print(user['did']+'.pdf')
-            #print(os.path.basename(c))
             if user['did']+'.pdf' == os.path.basename(c):
                 useremail = user['email']
+                public_key = user['public_key']
+
+                # encrypt file with public_key
+                file_content = open(c, "rb").read()
+                encrypted = ecies.encrypt(public_key, file_content)
+
+                # upload encrypted file content to IPFS
+                file_hash = client.add_bytes(encrypted)
+
+                # print out uploaded file and hash
+                print(os.path.basename(c), file_hash)
+
+                # TODO send the email with hash to user's mail
  
-        os.system('gpg --encrypt --recipient "'+useremail+'" '+c)
-        IPFS_res = client.add(c+'.gpg')['Hash']
-        print(os.path.basename(c),IPFS_res)
+        # os.system('gpg --encrypt --recipient "'+useremail+'" '+c)
+        # IPFS_res = client.add(c+'.gpg')['Hash']
+        # print(os.path.basename(c),IPFS_res)
     client.close()
 
     return txid
