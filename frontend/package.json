@@ -16,7 +16,6 @@
     "bootstrap": "^4.5.2",
     "eciesjs": "^0.3.7",
     "eslint": "^6.6.0",
-    "ipfs-http-client": "^47.0.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",
