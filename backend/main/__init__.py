@@ -7,6 +7,13 @@ from flask_cors import *
 from app import app
 from PyPDF2 import PdfFileReader
 from pprint import pprint
+import pathlib
+
+
+
+# create upload path
+upload_path = "upload"
+pathlib.Path(upload_path).mkdir(exist_ok=True)
 
 api_root = "bcert.pku.edu.cn"
 
@@ -36,7 +43,7 @@ def upload():
     try:
        certname = request.files['file'].filename
        cert = request.files.get('file')
-       url = 'upload/tmp/'+certname
+       url = upload_path + "/" + certname
        cert.save(url)
        valid, reason = validate_certificate(url, conf['issuer_identifier'],conf['testnet'],conf['blockchain_services'])
     except:
