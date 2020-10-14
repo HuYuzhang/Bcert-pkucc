@@ -18,7 +18,11 @@ const CertLink: React.FC<{ cert: CertRecord; privateKey: string }>
   );
 };
 
-export const CertList: React.FC = () => {
+interface Props {
+  refreshToken: any;
+}
+
+export const CertList: React.FC<Props> = ({ refreshToken }) => {
 
   const { session } = useBSSession();
 
@@ -32,7 +36,7 @@ export const CertList: React.FC = () => {
     getCertsInRemote(session)
       .then((data) => setCerts(data))
       .finally(() => setLoading(false));
-  }, []);
+  }, [refreshToken]);
 
   return (
     <div className="col-lg-12 text-center">

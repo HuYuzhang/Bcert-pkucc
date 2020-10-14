@@ -4,8 +4,11 @@ import { downloadFileFromIPFS, saveHashToRemote } from "src/utils/file";
 import { useBSSession } from "src/stores/BlockstackSessionStore";
 import { Label, Input } from "reactstrap";
 
+interface Props {
+  refreshCerts: () => void;
+}
 
-export const DownloadCert: React.FC = () => {
+export const DownloadCert: React.FC<Props> = ({ refreshCerts }) => {
 
   const { session } = useBSSession();
   const [hash, setHash] = useState("");
@@ -19,6 +22,7 @@ export const DownloadCert: React.FC = () => {
       // if the user requests to save, try saving
       if (save) {
         await saveHashToRemote(session, cert);
+        refreshCerts();
       }
 
     } catch (e) {
