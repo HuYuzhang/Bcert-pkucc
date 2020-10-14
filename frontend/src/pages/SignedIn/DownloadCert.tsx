@@ -1,10 +1,44 @@
 /* eslint-disable max-len */
-import { downloadCertPath } from "src/api";
+import { downloadCertPath, ipfsRoot } from "src/api";
 import React, { useState } from "react";
+import ipfsHttpClient from "ipfs-http-client";
+
+async function getFileContent(iterator: AsyncIterable<Uint8Array>): Promise<Uint8Array> {
+
+  const content = [] as Uint8Array[];
+  let size = 0;
+  for await (const chunk of iterator) {
+    content.push(chunk as Uint8Array);
+    size += content.length;
+  }
+
+  const fileContent = new Uint8Array(size);
+  let offset = 0;
+  content.forEach((item) => {
+    fileContent.set(item, offset);
+    offset += item.length;
+  });
+
+  return fileContent;
+
+}
 
 export const DownloadCert: React.FC = () => {
 
   const [hash, setHash] = useState("");
+
+  const downloadFile = async () => {
+    const ipfs = ipfsHttpClient(ipfsRoot);
+
+    try {
+      for await (const file of ipfs.get(hash)) {
+        const content = await getFileContent(ipfs.content);
+        console.log(file, content);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   return (
     <div className="ipfs">
@@ -25,9 +59,7 @@ export const DownloadCert: React.FC = () => {
             type="text" name="hash" value={hash} onChange={(e) => setHash(e.target.value)}
             className="number" placeholder="证书hash值"
           />
-          <form method="get" action={downloadCertPath(hash)}>
-            <button className="ok" type="submit">下载</button>
-          </form>
+          <button className="ok" type="submit" onClick={downloadFile}>下载</button>
         </div>
       </div>
     </div>
