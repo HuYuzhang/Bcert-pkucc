@@ -1,54 +1,40 @@
 import { decrypt, PrivateKey } from "eciesjs";
+import { ipfsDownloadPath } from "src/api";
 
-import ipfsHttpClient from "ipfs-http-client";
-import { ipfsRoot } from "src/api";
+export async function downloadFromIPFS(hash: string): Promise<ArrayBuffer> {
+  const url = ipfsDownloadPath(hash);
 
+  const resp = await fetch(url);
 
-async function getFileContent(iterator: AsyncIterable<Uint8Array>): Promise<Uint8Array> {
+  const blob = await resp.blob();
 
-  const content = [] as Uint8Array[];
-  let size = 0;
-  for await (const chunk of iterator) {
-    content.push(chunk as Uint8Array);
-    size += content.length;
-  }
-
-  const fileContent = new Uint8Array(size);
-  let offset = 0;
-  content.forEach((item) => {
-    fileContent.set(item, offset);
-    offset += item.length;
-  });
-
-  return fileContent;
+  return await blob.arrayBuffer();
 
 }
 
-export async function downloadFromIPFS(hash: string): Promise<Uint8Array> {
-  const ipfs = ipfsHttpClient(ipfsRoot);
+// export async function downloadFromIPFS(hash: string): Promise<Uint8Array> {
+//   const ipfs = ipfsHttpClient(ipfsRoot);
 
-  let content: Uint8Array | undefined = undefined;
+//   let content: Uint8Array | undefined = undefined;
 
-  for await (const file of ipfs.get(hash)) {
-    if (content) {
-      throw new Error(`hash ${hash} points to multiple files.`);
-    }
-    content = await getFileContent(ipfs.content);
-    console.log(file, content);
-  }
-  if (!content) {
-    throw new Error(`hash ${hash} does not point to any file.`);
-  }
-  return content;
-}
+//   for await (const file of ipfs.get(hash)) {
+//     if (content) {
+//       throw new Error(`hash ${hash} points to multiple files.`);
+//     }
+//     content = await getFileContent(ipfs.content);
+//     console.log(file, content);
+//   }
+//   if (!content) {
+//     throw new Error(`hash ${hash} does not point to any file.`);
+//   }
+//   return content;
+// }
 
-export function decryptFileContent(content: Uint8Array, privateKey: string): Buffer {
+export function decryptFileContent(content: ArrayBuffer, privateKey: string): Buffer {
 
   const keyObj = new PrivateKey(Buffer.from(privateKey, "hex"));
 
-  const encryptedBuffer = Buffer.from(content);
-
-  const decrypted = decrypt(keyObj.toHex(), encryptedBuffer);
+  const decrypted = decrypt(keyObj.toHex(), Buffer.from(content));
 
   return decrypted;
 }
