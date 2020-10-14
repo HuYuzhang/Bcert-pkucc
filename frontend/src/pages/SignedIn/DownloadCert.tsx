@@ -1,40 +1,28 @@
 /* eslint-disable max-len */
-import { downloadCertPath, ipfsRoot } from "src/api";
 import React, { useState } from "react";
-import ipfsHttpClient from "ipfs-http-client";
-
-async function getFileContent(iterator: AsyncIterable<Uint8Array>): Promise<Uint8Array> {
-
-  const content = [] as Uint8Array[];
-  let size = 0;
-  for await (const chunk of iterator) {
-    content.push(chunk as Uint8Array);
-    size += content.length;
-  }
-
-  const fileContent = new Uint8Array(size);
-  let offset = 0;
-  content.forEach((item) => {
-    fileContent.set(item, offset);
-    offset += item.length;
-  });
-
-  return fileContent;
-
-}
+import { decryptFileContent, downloadBuffer, downloadFromIPFS } from "src/utils/file";
+import { useBSSession } from "src/stores/BlockstackSessionStore";
 
 export const DownloadCert: React.FC = () => {
 
+  const { session } = useBSSession();
   const [hash, setHash] = useState("");
 
   const downloadFile = async () => {
-    const ipfs = ipfsHttpClient(ipfsRoot);
 
     try {
-      for await (const file of ipfs.get(hash)) {
-        const content = await getFileContent(ipfs.content);
-        console.log(file, content);
-      }
+      // download file
+      console.log(`Starting download file ${hash} from IPFS...`);
+      const content = await downloadFromIPFS(hash);
+
+      // decrypt file
+      console.log("Download complete. Starting decrypting file...");
+      const decrypted = decryptFileContent(content, session.loadUserData().appPrivateKey);
+
+      // init download
+      console.log("Decryption complete. Initiating download...");
+      downloadBuffer(decrypted);
+
     } catch (e) {
       console.error(e);
     }
