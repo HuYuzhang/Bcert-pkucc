@@ -1,5 +1,7 @@
+import { UserSession } from "blockstack";
 import { decrypt, PrivateKey } from "eciesjs";
 import { ipfsDownloadPath } from "src/api";
+import { getPdfMetadata } from "./pdf";
 
 export async function downloadFromIPFS(hash: string): Promise<ArrayBuffer> {
   const url = ipfsDownloadPath(hash);
@@ -12,24 +14,6 @@ export async function downloadFromIPFS(hash: string): Promise<ArrayBuffer> {
 
 }
 
-// export async function downloadFromIPFS(hash: string): Promise<Uint8Array> {
-//   const ipfs = ipfsHttpClient(ipfsRoot);
-
-//   let content: Uint8Array | undefined = undefined;
-
-//   for await (const file of ipfs.get(hash)) {
-//     if (content) {
-//       throw new Error(`hash ${hash} points to multiple files.`);
-//     }
-//     content = await getFileContent(ipfs.content);
-//     console.log(file, content);
-//   }
-//   if (!content) {
-//     throw new Error(`hash ${hash} does not point to any file.`);
-//   }
-//   return content;
-// }
-
 export function decryptFileContent(content: ArrayBuffer, privateKey: string): Buffer {
 
   const keyObj = new PrivateKey(Buffer.from(privateKey, "hex"));
@@ -39,11 +23,107 @@ export function decryptFileContent(content: ArrayBuffer, privateKey: string): Bu
   return decrypted;
 }
 
-export function downloadBuffer(buffer: Buffer) {
+export function downloadBuffer(buffer: Buffer, filename: string) {
   const link = document.createElement("a");
   const blob = new Blob([new Uint8Array(buffer)], { type: "application/pdf" });
   link.href = window.URL.createObjectURL(blob);
-  link.download = "cert.pdf";
+  link.download = filename;
   link.click();
 }
 
+export async function downloadFileFromIPFS(hash: string, privateKey: string) {
+
+  // download file
+  console.log(`Starting download file ${hash} from IPFS...`);
+  const content = await downloadFromIPFS(hash);
+
+  // decrypt file
+  console.log("Download complete. Starting decrypting file...");
+  const decrypted = decryptFileContent(content, privateKey);
+
+  // get CertRecord
+  const cert = await getCertRecord(decrypted, hash);
+
+  // init download
+  console.log("Decryption complete. Initiating download...");
+  downloadBuffer(decrypted, recordName(cert) + ".pdf");
+
+  return cert;
+}
+
+const CERTS_RECORD_FILE_PATH = "/certs.txt";
+
+export interface CertRecord {
+  did: string;
+  name: string;
+  date: string;
+  major: string;
+  issuer: string;
+  hash: string;
+}
+
+function recordEquals(a: CertRecord, b: CertRecord) {
+  return a.hash === b.hash;
+}
+
+export function recordName(cert: CertRecord) {
+  return `${cert.major}-${cert.issuer}-${cert.date}`;
+}
+
+export async function getCertsInRemote(session: UserSession): Promise<CertRecord[]> {
+  try {
+    const data = await session.getFile(CERTS_RECORD_FILE_PATH) as string;
+    return JSON.parse(data);
+  } catch (e) {
+    return [];
+  }
+}
+
+export async function getCertRecord(pdfContent: Buffer, hash: string) {
+  const { did, issuer, name, major, date } = await getPdfMetadata(pdfContent);
+  return {
+    did: did.value,
+    name: name.value,
+    date: date.value,
+    major: major.value,
+    issuer,
+    hash,
+  };
+}
+
+export async function saveHashToRemote(session: UserSession, record: CertRecord) {
+  const { username } = session.loadUserData();
+
+  console.log("Current user:", username);
+
+  console.log("The pdf's owner", record.did);
+
+  // check whether the did is the owner
+  if (record.did === username) {
+    console.log("The downloaded file belongs to the signed-in user.");
+    // upload the hash to the gaia
+
+    // download the existing certs
+    const certs = [] as CertRecord[];
+    try {
+      const downloaded = await session.getFile(CERTS_RECORD_FILE_PATH) as string;
+      certs.push(...JSON.parse(downloaded));
+      console.log("Existing items", certs);
+    } catch (e) {
+      console.log("First time upload.");
+    }
+    // check for dup
+    if (certs.every((c) => !recordEquals(c, record))) {
+      certs.push(record);
+      console.log("Add new item", record);
+
+      console.log("Uploading records");
+      await session.putFile(CERTS_RECORD_FILE_PATH, JSON.stringify(certs));
+      console.log("New records uploaded");
+    } else {
+      console.log("The item already exists.");
+    }
+  } else {
+    console.log("The downloaded file does not belong to the signed-in user.");
+  }
+}

@@ -1,27 +1,25 @@
 /* eslint-disable max-len */
 import React, { useState } from "react";
-import { decryptFileContent, downloadBuffer, downloadFromIPFS } from "src/utils/file";
+import { downloadFileFromIPFS, saveHashToRemote } from "src/utils/file";
 import { useBSSession } from "src/stores/BlockstackSessionStore";
+import { Label, Input } from "reactstrap";
+
 
 export const DownloadCert: React.FC = () => {
 
   const { session } = useBSSession();
   const [hash, setHash] = useState("");
+  const [save, setSave] = useState(false);
 
   const downloadFile = async () => {
 
     try {
-      // download file
-      console.log(`Starting download file ${hash} from IPFS...`);
-      const content = await downloadFromIPFS(hash);
+      const cert = await downloadFileFromIPFS(hash, session.loadUserData().appPrivateKey);
 
-      // decrypt file
-      console.log("Download complete. Starting decrypting file...");
-      const decrypted = decryptFileContent(content, session.loadUserData().appPrivateKey);
-
-      // init download
-      console.log("Decryption complete. Initiating download...");
-      downloadBuffer(decrypted);
+      // if the user requests to save, try saving
+      if (save) {
+        await saveHashToRemote(session, cert);
+      }
 
     } catch (e) {
       console.error(e);
@@ -48,6 +46,10 @@ export const DownloadCert: React.FC = () => {
             className="number" placeholder="证书hash值"
           />
           <button className="ok" type="submit" onClick={downloadFile}>下载</button>
+          <Label check>
+            <Input type="checkbox" id="save" checked={save} onChange={(e) => setSave(e.target.checked)}/>
+            保存证书到自己的账号里
+          </Label>
         </div>
       </div>
     </div>

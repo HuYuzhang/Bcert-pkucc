@@ -16,6 +16,8 @@
     "bootstrap": "^4.5.2",
     "eciesjs": "^0.3.7",
     "eslint": "^6.6.0",
+    "pdfjs": "^2.4.1",
+    "pdfjs-dist": "^2.5.207",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",
@@ -46,6 +48,7 @@
     ]
   },
   "devDependencies": {
+    "@types/pdfjs-dist": "^2.1.5",
     "@types/reactstrap": "^8.5.1",
     "@typescript-eslint/eslint-plugin": "^4.4.0",
     "@typescript-eslint/parser": "^4.4.0",
