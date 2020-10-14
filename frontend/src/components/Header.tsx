@@ -1,6 +1,6 @@
 import { useBSSession } from "src/stores/BlockstackSessionStore";
 import React, { useCallback, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import {
   Collapse,
   Navbar,
@@ -45,6 +45,13 @@ export const Header: React.FC = () => {
 
   const toggle = () => setIsOpen(!isOpen);
 
+  const history = useHistory();
+
+  const handleSignOut = () => {
+    signOut();
+    history.push("/");
+  };
+
   return (
     <Navbar expand="md" dark color="blue">
       <NavbarBrand>
@@ -73,10 +80,15 @@ export const Header: React.FC = () => {
                     </a>
                   </NavItem>
                   <NavItem>
+                    <Link className="nav-link pointer" to="/dashboard">
+                      个人中心
+                    </Link>
+                  </NavItem>
+                  <NavItem>
                     <CopyPublicKeyLink getPublicKey={getPublicKey} />
                   </NavItem>
                   <NavItem>
-                    <a className="nav-link pointer" onClick={signOut}>
+                    <a className="nav-link pointer" onClick={handleSignOut}>
                       登出
                     </a>
                   </NavItem>
