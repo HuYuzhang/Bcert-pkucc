@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, Route, Switch, useHistory, useLocation } from "react-router-dom";
 import { BlockstackSessionStore, useBSSession } from "./stores/BlockstackSessionStore";
 import { createStore, StoreProvider } from "simstate";
 import { LandingPage } from "./pages/Landing";
@@ -14,12 +14,18 @@ function App() {
 
   const [loading, setLoading] = useState(false);
 
+  const history = useHistory();
+
   useEffect(() => {
     if(!session.isUserSignedIn() && session.isSignInPending()) {
       setLoading(true);
-      handlePendingSignIn().finally(() => {
-        setLoading(false);
-      });
+      handlePendingSignIn()
+        .then(() => {
+          history.push("/dashboard");
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     }
   }, []);
 
@@ -27,12 +33,10 @@ function App() {
     <PageLoading show={loading}>
       <div>
         <Header />
-        <main>
-          {session.isUserSignedIn()
-            ? <SignedInPage />
-            : <LandingPage />
-          }
-        </main>
+        <Switch>
+          <Route path="/dashboard" component={SignedInPage } />
+          <Route path="*" component={LandingPage} />
+        </Switch>
         <Footer />
       </div>
     </PageLoading>

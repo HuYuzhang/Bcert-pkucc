@@ -25,8 +25,6 @@ export function BlockstackSessionStore() {
     const userData = await session.handlePendingSignIn();
     if(!userData.username) {
       alert("This app requires a username.");
-    } else {
-      refresh();
     }
 
     // remove the querystring
@@ -35,6 +33,8 @@ export function BlockstackSessionStore() {
       const noQuerystring = path.split("?")[0];
       window.history.pushState({}, document.title, noQuerystring);
     }
+
+    return userData;
 
   }, []);
 
