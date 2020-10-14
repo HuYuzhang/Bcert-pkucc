@@ -4,7 +4,7 @@ to CRED meta-protocol for issuing/revoking certificates
 on the blockchain.
 '''
 import time
-from blockchain_certificates import utils
+from . import utils
 
 # Allowed operators -- 2 bytes available
 operators = {

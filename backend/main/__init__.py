@@ -8,7 +8,7 @@ from app import app
 from PyPDF2 import PdfFileReader
 from pprint import pprint
 import pathlib
-
+import ipfshttpclient
 
 
 # create upload path
@@ -115,6 +115,16 @@ def verify():
        return '该证书为真！'+'持有者为北京大学'+info['/metadata'][date+78 : date+82]+'届毕业生'+info['/metadata'][name+70 : major-5]+'。'
       else:
        return '该证书为假！'+'原因:'+reason
+
+ipfs_root = "https://bcert.pku.edu.cn/ipfs"
+
+@app.route("/download/<hash>", methods=["get"])
+@cross_origin
+def download(hash):
+    client = ipfshttpclient.connect(ipfs_root)
+    client.files
+    
+
 
 @app.after_request
 def cors(environ):

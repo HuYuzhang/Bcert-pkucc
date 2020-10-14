@@ -9,11 +9,12 @@ import datetime
 import configargparse
 import ipfshttpclient
 from pdfrw import PdfReader, PdfWriter, PdfDict
-from blockchain_certificates.chainpoint import ChainPointV2
-from blockchain_certificates import pdf_utils
-from blockchain_certificates import publish_hash
-from blockchain_certificates import cred_protocol
+from .chainpoint import ChainPointV2
+from . import pdf_utils
+from . import publish_hash
+from . import cred_protocol
 import ecies
+from .email import send_cert_email
 
 
 '''
@@ -124,6 +125,7 @@ def create_certificates(conf, interactive=False):
             if user['did']+'.pdf' == os.path.basename(c):
                 useremail = user['email']
                 public_key = user['public_key']
+                name = user['name']
 
                 # encrypt file with public_key
                 file_content = open(c, "rb").read()
@@ -135,7 +137,15 @@ def create_certificates(conf, interactive=False):
                 # print out uploaded file and hash
                 print(os.path.basename(c), file_hash)
 
-                # TODO send the email with hash to user's mail
+                # send the email with hash to user's mail
+                try:
+                    send_cert_email(useremail, name, file_hash)
+                    print(f"{name}的邮件已发送到{useremail}")
+                except Exception as e:
+                    print(f"发送到{name}（{useremail}）的邮件失败。原因：{e}")
+
+
+
  
         # os.system('gpg --encrypt --recipient "'+useremail+'" '+c)
         # IPFS_res = client.add(c+'.gpg')['Hash']

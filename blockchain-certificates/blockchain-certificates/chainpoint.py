@@ -2,9 +2,9 @@ import requests
 import binascii
 import time
 from merkletools import MerkleTools
-from blockchain_certificates import cred_protocol
-from blockchain_certificates import network_utils
-from blockchain_certificates import utils
+from . import cred_protocol
+from . import network_utils
+from . import utils
 
 CHAINPOINT_CONTEXT = 'https://w3id.org/chainpoint/v2'
 CHAINPOINT_HASH_TYPES = {'sha224': 'ChainpointSHA224v2',

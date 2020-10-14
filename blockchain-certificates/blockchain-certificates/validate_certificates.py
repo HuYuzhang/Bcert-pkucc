@@ -13,10 +13,10 @@ from pdfrw import PdfReader, PdfWriter, PdfDict
 from bitcoinutils.setup import setup
 from bitcoinutils.keys import P2pkhAddress
 
-from blockchain_certificates import cred_protocol
-from blockchain_certificates import network_utils
-from blockchain_certificates import utils
-from blockchain_certificates.chainpoint import ChainPointV2
+from . import cred_protocol
+from . import network_utils
+from . import utils
+from .chainpoint import ChainPointV2
 
 '''
 Gets issuer address from pdf metadata; requires backward compatibility using

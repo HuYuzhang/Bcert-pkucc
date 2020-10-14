@@ -14,9 +14,9 @@ from pdfrw import PdfReader, PdfWriter, PdfDict
 from bitcoinutils.setup import setup
 from bitcoinutils.keys import P2pkhAddress
 
-from blockchain_certificates import pdf_utils
-from blockchain_certificates import publish_hash
-from blockchain_certificates import cred_protocol
+from . import pdf_utils
+from . import publish_hash
+from . import cred_protocol
 
 
 '''

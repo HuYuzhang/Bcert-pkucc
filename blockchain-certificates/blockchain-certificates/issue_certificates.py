@@ -7,10 +7,10 @@ import glob
 import json
 import configargparse
 from pdfrw import PdfReader, PdfWriter, PdfDict
-from blockchain_certificates.chainpoint import ChainPointV2
-from blockchain_certificates import pdf_utils
-from blockchain_certificates import publish_hash
-from blockchain_certificates import cred_protocol
+from .chainpoint import ChainPointV2
+from . import pdf_utils
+from . import publish_hash
+from . import cred_protocol
 
 
 '''
