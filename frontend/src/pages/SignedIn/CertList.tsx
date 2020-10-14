@@ -8,7 +8,7 @@ export const CertList: React.FC = () => {
   const { username } = session.loadUserData();
 
   return (
-    <div className="col-lg-12">
+    <div className="col-lg-12 text-center">
       <h2>Student {username}</h2>
 
       <p>

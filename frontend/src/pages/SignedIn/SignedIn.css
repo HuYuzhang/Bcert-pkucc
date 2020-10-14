@@ -1,5 +1,5 @@
 .signInPage {
-  text-align: center;
+  /* text-align: center; */
 }
 
 img.rounded-circle {
@@ -10,6 +10,7 @@ img.rounded-circle {
 }
 
 .territory {
+  text-align: center;
   background: no-repeat;
   background-size: cover;
   background-image: url(/image/territories/campus.jpg);

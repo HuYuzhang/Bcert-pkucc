@@ -1,9 +1,9 @@
 import React from "react";
-import { Col, Container, Row } from "reactstrap";
+import { Container, Row } from "reactstrap";
 import { Banner } from "./Banner";
 import { CertList } from "./CertList";
+import { DownloadCert } from "./DownloadCert";
 import "./SignedIn.css";
-import { UserInfo } from "./UserInfo";
 
 export const SignedInPage: React.FC = () => {
   return (
@@ -13,6 +13,9 @@ export const SignedInPage: React.FC = () => {
       </Row>
       <Row width="12" className="my-4">
         <CertList />
+      </Row>
+      <Row width="12" className="my-4">
+        <DownloadCert />
       </Row>
     </Container>
   );
