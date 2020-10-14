@@ -160,8 +160,6 @@ def main():
         sys.stderr.write('Python 3 is required!')
         sys.exit(1)
 
-
-
     conf = load_config()
     txid = create_certificates(conf, True)
 
