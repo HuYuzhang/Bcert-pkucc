@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { ListGroup, ListGroupItem } from "reactstrap";
+import { CertRecord } from "src/models/CertRecord";
 import { useBSSession } from "src/stores/BlockstackSessionStore";
-import { CertRecord, downloadFileFromIPFS, getCertsInRemote } from "src/utils/file";
+import { downloadFileFromIPFS, getCertsInRemote } from "src/utils/file";
 
 const CertLink: React.FC<{ cert: CertRecord; privateKey: string }>
 = ({ cert, privateKey }) => {

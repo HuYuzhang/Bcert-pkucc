@@ -1,7 +1,7 @@
 import { UserSession } from "blockstack";
 import { decrypt, PrivateKey } from "eciesjs";
 import { ipfsDownloadPath } from "src/api";
-import { getPdfMetadata } from "./pdf";
+import { CertRecord } from "src/models/CertRecord";
 
 export async function downloadFromIPFS(hash: string): Promise<ArrayBuffer> {
   const url = ipfsDownloadPath(hash);
@@ -42,33 +42,16 @@ export async function downloadFileFromIPFS(hash: string, privateKey: string) {
   const decrypted = decryptFileContent(content, privateKey);
 
   // get CertRecord
-  const cert = await getCertRecord(decrypted, hash);
+  const cert = await CertRecord.fromPdfContent(decrypted, hash);
 
   // init download
   console.log("Decryption complete. Initiating download...");
-  downloadBuffer(decrypted, recordName(cert) + ".pdf");
+  downloadBuffer(decrypted, cert.fileName() + ".pdf");
 
   return cert;
 }
 
 const CERTS_RECORD_FILE_PATH = "/certs.txt";
-
-export interface CertRecord {
-  did: string;
-  name: string;
-  date: string;
-  major: string;
-  issuer: string;
-  hash: string;
-}
-
-function recordEquals(a: CertRecord, b: CertRecord) {
-  return a.hash === b.hash;
-}
-
-export function recordName(cert: CertRecord) {
-  return `${cert.major}-${cert.issuer}-${cert.date}`;
-}
 
 export async function getCertsInRemote(session: UserSession): Promise<CertRecord[]> {
   try {
@@ -77,18 +60,6 @@ export async function getCertsInRemote(session: UserSession): Promise<CertRecord
   } catch (e) {
     return [];
   }
-}
-
-export async function getCertRecord(pdfContent: Buffer, hash: string) {
-  const { did, issuer, name, major, date } = await getPdfMetadata(pdfContent);
-  return {
-    did: did.value,
-    name: name.value,
-    date: date.value,
-    major: major.value,
-    issuer,
-    hash,
-  };
 }
 
 export async function saveHashToRemote(session: UserSession, record: CertRecord) {
@@ -113,7 +84,7 @@ export async function saveHashToRemote(session: UserSession, record: CertRecord)
       console.log("First time upload.");
     }
     // check for dup
-    if (certs.every((c) => !recordEquals(c, record))) {
+    if (certs.every((c) => !c.equals(record))) {
       certs.push(record);
       console.log("Add new item", record);
 
