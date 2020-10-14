@@ -28,8 +28,7 @@ fpdf==1.7.2
 fs==2.4.11
 gnupg==2.3.1
 idna==2.9
-ipfsapi==0.4.4
-ipfshttpclient==0.4.12
+ipfshttpclient==0.6.1
 itsdangerous==1.1.0
 Jinja2==2.11.1
 Mako==1.1.2

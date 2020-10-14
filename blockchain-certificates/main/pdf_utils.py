@@ -177,8 +177,13 @@ def _fill_pdf_form(fields, pdf_cert_template_file, out_file, interactive=False):
         # print progress
         print('+', end="", flush=True)
 
-
-
+if __name__ == "__main__":
+    print("haha")
+    #print(fields_json_string)
+    real_path = os.path.dirname(os.path.realpath(__file__))
+    java_path = real_path + os.path.sep + "java"
+    cmd = 'java -cp {java_path}{pathsep}{java_path}{sep}itextpdf-5.5.10.jar{pathsep}{java_path}{sep}json-simple-1.1.1.jar{pathsep}{java_path}{sep}itext-asian-5.2.0.jar FillPdf "{pdf_cert_template_file}" "{out_file}" "{fields_json_string}"'.format(java_path=java_path, pathsep=os.path.pathsep, sep=os.path.sep, pdf_cert_template_file="", out_file="", fields_json_string="")
+    print(cmd)
 '''
 Inserts standard metadata to a pdf certfificate. All CSV fields in 'data'
 and 'global_fields' are added as metadata to the JSON metadata pdf field.
