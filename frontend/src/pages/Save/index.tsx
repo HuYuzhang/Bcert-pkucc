@@ -1,18 +1,17 @@
 import React, { useCallback, useEffect } from "react";
 import { useAsync } from "react-async";
 import { Link, RouteComponentProps, useLocation } from "react-router-dom";
-import { Container } from "reactstrap";
 import { useBSSession } from "src/stores/BlockstackSessionStore";
 import { getCertRecordFromIPFS, saveHashToRemote } from "src/utils/file";
-import { runInContext } from "vm";
+import "./SavePage.css";
 
 const PageContainer: React.FC = ({ children }) => {
   return (
-    <Container className="text-center" fluid>
+    <div className="d-flex align-items-center justify-content-center savepage">
       <p>
         {children}
       </p>
-    </Container>
+    </div>
   );
 };
 
