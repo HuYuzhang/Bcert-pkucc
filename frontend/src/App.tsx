@@ -15,15 +15,10 @@ function App() {
 
   const [loading, setLoading] = useState(false);
 
-  const history = useHistory();
-
   useEffect(() => {
     if(!session.isUserSignedIn() && session.isSignInPending()) {
       setLoading(true);
       handlePendingSignIn()
-        .then(() => {
-          history.push("/dashboard");
-        })
         .finally(() => {
           setLoading(false);
         });

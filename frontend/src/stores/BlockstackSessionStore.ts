@@ -1,5 +1,5 @@
 import { getPublicKeyFromPrivate, UserSession } from "blockstack";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { appConfig } from "src/utils/constants";
 import { useStore } from "simstate";
 
@@ -35,8 +35,9 @@ export function BlockstackSessionStore() {
     }
 
     return userData;
-
   }, []);
+
+
 
   return {
     session: useRef(session).current,
@@ -49,3 +50,26 @@ export function BlockstackSessionStore() {
 export function useBSSession() {
   return useStore(BlockstackSessionStore);
 }
+
+export const useHandlingPendingSignInEffect = () => {
+
+  const { session } = useBSSession();
+
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if(!session.isUserSignedIn()) {
+      if (session.isSignInPending()) {
+        setLoading(true);
+        session.handlePendingSignIn()
+          .finally(() => {
+            setLoading(false);
+          });
+      } else {
+        session.redirectToSignIn(window.location.href);
+      }
+    }
+  }, []);
+
+  return loading;
+};

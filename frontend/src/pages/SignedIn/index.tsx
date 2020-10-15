@@ -1,23 +1,18 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Container, Row } from "reactstrap";
-import { useBSSession } from "src/stores/BlockstackSessionStore";
-import { useRefreshToken } from "src/utils/useRefreshToken";
+import {
+  useBSSession,
+  useHandlingPendingSignInEffect,
+} from "src/stores/BlockstackSessionStore";
 import { Banner } from "./Banner";
-import { CertList } from "./CertList";
 import { DownloadCert } from "./DownloadCert";
 import "./SignedIn.css";
 
 export const SignedInPage: React.FC = () => {
 
   const { session } = useBSSession();
-  const [token, refresh] = useRefreshToken();
 
-
-  useEffect(() => {
-    if (!session.isUserSignedIn()) {
-      session.redirectToSignIn();
-    }
-  });
+  useHandlingPendingSignInEffect();
 
   if (!session.isUserSignedIn()) {
     return (

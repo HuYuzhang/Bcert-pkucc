@@ -1,7 +1,10 @@
 import React, { useCallback, useEffect } from "react";
 import { useAsync } from "react-async";
-import { Link, RouteComponentProps, useLocation } from "react-router-dom";
-import { useBSSession } from "src/stores/BlockstackSessionStore";
+import { Link, RouteComponentProps } from "react-router-dom";
+import {
+  useBSSession,
+  useHandlingPendingSignInEffect,
+} from "src/stores/BlockstackSessionStore";
 import { getCertRecordFromIPFS, saveHashToRemote } from "src/utils/file";
 import "./SavePage.css";
 
@@ -17,14 +20,9 @@ const PageContainer: React.FC = ({ children }) => {
 
 export const SavePage: React.FC<RouteComponentProps<{ hash: string }>> = ({ match }) => {
 
-  const location = useLocation();
   const { session } = useBSSession();
 
-  useEffect(() => {
-    if (!session.isUserSignedIn()) {
-      session.redirectToSignIn(location.pathname);
-    }
-  }, []);
+  useHandlingPendingSignInEffect();
 
   const { hash } = match.params;
 

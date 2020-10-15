@@ -52,6 +52,12 @@ export const Header: React.FC = () => {
     history.push("/");
   };
 
+  const handleLogin = () => {
+    const redirectUrl = `${window.location.origin}/dashboard`;
+    console.log(redirectUrl);
+    session.redirectToSignIn(redirectUrl);
+  };
+
   return (
     <Navbar expand="md" dark color="blue">
       <NavbarBrand>
@@ -98,7 +104,8 @@ export const Header: React.FC = () => {
                 <NavItem>
                   <a
                     className="nav-link pointer"
-                    onClick={() => session.redirectToSignIn()}
+                    onClick={handleLogin}
+
                   >
                     使用BlockStack ID登录
                   </a>
