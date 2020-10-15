@@ -14,6 +14,10 @@ def send_cert_email(receiver: str, receiver_name: str, hash: str):
             您可以在任何时候使用以下的代码（hash值）到 https://bcert.pku.edu.cn 网站上下载此证书。
             
             {hash}
+
+            您也可以点击这个链接将此份证书保存到您的blockstack账号中，以后可以快速下载使用。
+
+            https://bcert.pku.edu.cn/save/{hash}
     """, "plain", "utf-8")
 
     message['From'] = Header(sender_name, 'utf-8')
