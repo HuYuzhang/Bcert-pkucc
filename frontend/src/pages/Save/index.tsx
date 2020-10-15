@@ -1,22 +1,12 @@
 import React, { useCallback, useEffect } from "react";
 import { useAsync } from "react-async";
 import { Link, RouteComponentProps } from "react-router-dom";
+import { CenteredTextLayout } from "src/layout/CenteredTextLayout";
 import {
   useBSSession,
   useHandlingPendingSignInEffect,
 } from "src/stores/BlockstackSessionStore";
 import { getCertRecordFromIPFS, saveHashToRemote } from "src/utils/file";
-import "./SavePage.css";
-
-const PageContainer: React.FC = ({ children }) => {
-  return (
-    <div className="d-flex align-items-center justify-content-center savepage">
-      <p>
-        {children}
-      </p>
-    </div>
-  );
-};
 
 export const SavePage: React.FC<RouteComponentProps<{ hash: string }>> = ({ match }) => {
 
@@ -40,22 +30,22 @@ export const SavePage: React.FC<RouteComponentProps<{ hash: string }>> = ({ matc
 
   if (!session.isUserSignedIn()) {
     return (
-      <PageContainer >
+      <CenteredTextLayout >
         即将跳转到登录……
-      </PageContainer>
+      </CenteredTextLayout>
     );
   }
 
   if (!hash) {
     return (
-      <PageContainer>
+      <CenteredTextLayout>
           请指定要保存的文件的hash。
-      </PageContainer>
+      </CenteredTextLayout>
     );
   }
 
   return (
-    <PageContainer>
+    <CenteredTextLayout>
       {
         isLoading
           ? (
@@ -89,6 +79,6 @@ export const SavePage: React.FC<RouteComponentProps<{ hash: string }>> = ({ matc
             </>
 
       }
-    </PageContainer>
+    </CenteredTextLayout>
   );
 };

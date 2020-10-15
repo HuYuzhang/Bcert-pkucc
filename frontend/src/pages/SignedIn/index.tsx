@@ -1,5 +1,6 @@
 import React from "react";
 import { Container, Row } from "reactstrap";
+import { CenteredTextLayout } from "src/layout/CenteredTextLayout";
 import {
   useBSSession,
   useHandlingPendingSignInEffect,
@@ -16,14 +17,14 @@ export const SignedInPage: React.FC = () => {
 
   if (!session.isUserSignedIn()) {
     return (
-      <Container fluid>
+      <CenteredTextLayout>
         <p>
           用户未登录
         </p>
         <p>
           正在重定向至登录界面……
         </p>
-      </Container>
+      </CenteredTextLayout>
     );
   }
 
