@@ -37,11 +37,8 @@ export const SignedInPage: React.FC = () => {
       <Row width="12">
         <Banner />
       </Row>
-      <Row width="12" className="my-4">
-        <CertList refreshToken={token} />
-      </Row>
-      <Row width="12" className="my-4">
-        <DownloadCert refreshCerts={refresh} />
+      <Row width="12">
+        <DownloadCert />
       </Row>
     </Container>
   );

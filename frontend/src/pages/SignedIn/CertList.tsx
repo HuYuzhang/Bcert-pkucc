@@ -4,11 +4,22 @@ import { CertRecord } from "src/models/CertRecord";
 import { useBSSession } from "src/stores/BlockstackSessionStore";
 import { downloadFileFromIPFS, getCertsInRemote } from "src/utils/file";
 
-const CertLink: React.FC<{ cert: CertRecord; privateKey: string }>
-= ({ cert, privateKey }) => {
+interface CertLinkProps {
+  cert: CertRecord;
+  privateKey: string;
+  setPreparingDownloading: (f: boolean) => void;
+}
+
+const CertLink: React.FC<CertLinkProps> = ({
+  cert,
+  privateKey,
+  setPreparingDownloading,
+}) => {
 
   const onClick = () => {
-    downloadFileFromIPFS(cert.hash, privateKey);
+    setPreparingDownloading(true);
+    downloadFileFromIPFS(cert.hash, privateKey)
+      .finally(() => setPreparingDownloading(false));
   };
 
   return (
@@ -20,16 +31,16 @@ const CertLink: React.FC<{ cert: CertRecord; privateKey: string }>
 
 interface Props {
   refreshToken: any;
+  setPreparingDownload: (s: boolean) => void;
 }
 
-export const CertList: React.FC<Props> = ({ refreshToken }) => {
+export const CertList: React.FC<Props> = ({ refreshToken, setPreparingDownload }) => {
 
   const { session } = useBSSession();
 
-  const { username } = session.loadUserData();
-
   const [loading, setLoading] = useState(false);
   const [certs, setCerts] = useState<CertRecord[] | undefined>(undefined);
+
 
   useEffect(() => {
     setLoading(true);
@@ -39,25 +50,18 @@ export const CertList: React.FC<Props> = ({ refreshToken }) => {
   }, [refreshToken]);
 
   return (
-    <div className="col-lg-12 text-center">
-      <h2>Student {username}</h2>
-
-      <p>
-        您已经保存的证书（点击下载）：
-      </p>
-
-      <ListGroup>
-        {loading
-          ? "加载中……"
-          : ((certs ?? []).map((c, i) => (
-            <CertLink
-              key={i}
-              cert={c}
-              privateKey={session.loadUserData().appPrivateKey}
-            />
-          )))
-        }
-      </ListGroup>
-    </div>
+    <ListGroup>
+      {loading
+        ? "加载中……"
+        : ((certs ?? []).map((c, i) => (
+          <CertLink
+            setPreparingDownloading={setPreparingDownload}
+            key={i}
+            cert={c}
+            privateKey={session.loadUserData().appPrivateKey}
+          />
+        )))
+      }
+    </ListGroup>
   );
 };
