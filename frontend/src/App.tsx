@@ -7,6 +7,7 @@ import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import { SignedInPage } from "./pages/SignedIn";
 import { PageLoading } from "./components/PageLoading";
+import { SavePage } from "./pages/Save";
 
 function App() {
 
@@ -35,6 +36,7 @@ function App() {
         <Header />
         <Switch>
           <Route path="/dashboard" component={SignedInPage } />
+          <Route path="/save/:hash" component={SavePage} />
           <Route path="*" component={LandingPage} />
         </Switch>
         <Footer />

@@ -8,6 +8,10 @@ export async function downloadFromIPFS(hash: string): Promise<ArrayBuffer> {
 
   const resp = await fetch(url);
 
+  if (resp.status >= 300) {
+    throw new Error("Download File from IPFS failed");
+  }
+
   const blob = await resp.blob();
 
   return await blob.arrayBuffer();
@@ -29,6 +33,19 @@ export function downloadBuffer(buffer: Buffer, filename: string) {
   link.href = window.URL.createObjectURL(blob);
   link.download = filename;
   link.click();
+}
+
+export async function getCertRecordFromIPFS(hash: string, privateKey: string) {
+  // download file
+  console.log(`Starting download file ${hash} from IPFS...`);
+  const content = await downloadFromIPFS(hash);
+
+  // decrypt file
+  console.log("Download complete. Starting decrypting file...");
+  const decrypted = decryptFileContent(content, privateKey);
+
+  // get CertRecord
+  return await CertRecord.fromPdfContent(decrypted, hash);
 }
 
 export async function downloadFileFromIPFS(hash: string, privateKey: string) {
@@ -62,7 +79,8 @@ export async function getCertsInRemote(session: UserSession): Promise<CertRecord
   }
 }
 
-export async function saveHashToRemote(session: UserSession, record: CertRecord) {
+export async function saveHashToRemote(session: UserSession, record: CertRecord)
+: Promise<"Success" | "NotOwner" | "Dup"> {
   const { username } = session.loadUserData();
 
   console.log("Current user:", username);
@@ -91,10 +109,14 @@ export async function saveHashToRemote(session: UserSession, record: CertRecord)
       console.log("Uploading records");
       await session.putFile(CERTS_RECORD_FILE_PATH, JSON.stringify(certs));
       console.log("New records uploaded");
+      return "Success";
     } else {
       console.log("The item already exists.");
+      return "Dup";
+
     }
   } else {
     console.log("The downloaded file does not belong to the signed-in user.");
+    return "NotOwner";
   }
 }
