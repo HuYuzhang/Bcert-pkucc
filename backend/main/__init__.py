@@ -9,6 +9,7 @@ from PyPDF2 import PdfFileReader
 from pprint import pprint
 import pathlib
 import ipfshttpclient
+import traceback
 
 
 # create upload path
@@ -46,7 +47,10 @@ def upload():
        url = upload_path + "/" + certname
        cert.save(url)
        valid, reason = validate_certificate(url, conf['issuer_identifier'],conf['testnet'],conf['blockchain_services'])
-    except:
+    except Exception as e:
+       app.logger.error("Error when uploading file.")
+       app.logger.error(traceback.format_exc())
+
        return render_template('uploadfail.html',state='认证失败！',reason='请检查您是否上传了正确的文件或联系网站管理人员。')
     else:
        if valid:
