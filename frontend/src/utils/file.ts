@@ -72,8 +72,9 @@ const CERTS_RECORD_FILE_PATH = "/certs.txt";
 
 export async function getCertsInRemote(session: UserSession): Promise<CertRecord[]> {
   try {
-    const data = await session.getFile(CERTS_RECORD_FILE_PATH) as string;
-    return JSON.parse(data);
+    const data = JSON.parse(await session.getFile(CERTS_RECORD_FILE_PATH) as string);
+    console.log(data);
+    return data.map((x) => CertRecord.fromJSON(x));
   } catch (e) {
     return [];
   }
@@ -93,21 +94,17 @@ export async function saveHashToRemote(session: UserSession, record: CertRecord)
     // upload the hash to the gaia
 
     // download the existing certs
-    const certs = [] as CertRecord[];
-    try {
-      const downloaded = await session.getFile(CERTS_RECORD_FILE_PATH) as string;
-      certs.push(...JSON.parse(downloaded));
-      console.log("Existing items", certs);
-    } catch (e) {
-      console.log("First time upload.");
-    }
+    const certs = await getCertsInRemote(session);
+    console.log("Existing items", certs);
+
     // check for dup
     if (certs.every((c) => !c.equals(record))) {
       certs.push(record);
       console.log("Add new item", record);
 
       console.log("Uploading records");
-      await session.putFile(CERTS_RECORD_FILE_PATH, JSON.stringify(certs));
+      await session.putFile(CERTS_RECORD_FILE_PATH,
+        JSON.stringify(certs.map((x) => x.toPlain())));
       console.log("New records uploaded");
       return "Success";
     } else {

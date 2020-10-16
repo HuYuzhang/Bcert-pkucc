@@ -18,6 +18,22 @@ export class CertRecord {
     this.hash = hash;
   }
 
+  static fromJSON(obj: any) {
+    const { did, name, date, major, issuer, hash } = obj;
+    return new CertRecord(did, name, date, major, issuer, hash);
+  }
+
+  toPlain() {
+    return {
+      did: this.did,
+      name: this.name,
+      date: this.date,
+      major: this.major,
+      issuer: this.issuer,
+      hash: this.hash,
+    };
+  }
+
   fileName() {
     return `${this.major}-${this.issuer}-${this.date}`;
   }
