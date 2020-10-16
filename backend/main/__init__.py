@@ -28,8 +28,8 @@ def index(path):
 
 # 没连接上btcd，所以先去掉了……
 conf = {
-    # 'blockchain_services': { "services": [ { "blockcypher":{} } ], "required_successes": 1 },
-    'blockchain_services': { "services": [ { "blockcypher":{} }, { "btcd": { "full_url": btcd_url }} ], "required_successes": 2 },
+    'blockchain_services': { "services": [ { "blockcypher":{} } ], "required_successes": 1 },
+    # 'blockchain_services': { "services": [ { "blockcypher":{} }, { "btcd": { "full_url": btcd_url }} ], "required_successes": 2 },
     'config':'PKU_2020_Graduates/config.ini', 
     'full_node_rpc_password':'123456', 
     'full_node_rpc_user':'jasmin3q',
