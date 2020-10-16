@@ -108,8 +108,8 @@ def create_certificates(conf, interactive=False):
     
 
 
-    # txid = publish_hash.issue_op_return(conf, op_return_bstring, interactive)
-    txid = "mock"
+    txid = publish_hash.issue_op_return(conf, op_return_bstring, interactive)
+    # txid = "mock"
     insert_proof_to_certificates(conf, cp, txid, cert_files, interactive)
     print(txid)
 
