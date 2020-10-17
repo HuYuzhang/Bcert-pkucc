@@ -86,9 +86,12 @@ const InfoModal: React.FC<{
   return (
     <Modal isOpen={open} toggle={toggle}>
       <ModalHeader toggle={toggle}>
-          发送学校账号信息
+          绑定学校身份
       </ModalHeader>
       <ModalBody>
+        <p>
+          在真实系统中，此步将会直接使用学校的身份认证系统确认学生身份以及下列信息。
+        </p>
         <Form>
           <TextInput field="name" data={data} setData={setData} label="姓名" />
           <TextInput field="email" data={data} setData={setData} label="Email" />
@@ -101,7 +104,7 @@ const InfoModal: React.FC<{
           关闭
         </Button>
         <Button color="primary" onClick={onSubmit} disabled={submitting}>
-          发送
+          绑定
         </Button>
       </ModalFooter>
     </Modal>
