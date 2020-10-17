@@ -2,16 +2,16 @@ from typing import List, TypedDict
 import csv
 
 class User(TypedDict):
-    studentno: str
     name: str
     email: str
     major: str
     degree: str
+    date: str
     did: str
-    publickey: str
+    public_key: str
 
     
-csv_path = "test.csv"
+csv_path = "../blockchain-certificates/example/graduates.csv"
 
 def get_data() -> List[User]:
     with open(csv_path, "r") as f:
@@ -19,7 +19,7 @@ def get_data() -> List[User]:
         return list(reader)
 
 def add_or_update(user: User):
-    data = [d for d in get_data() if d["studentno"] != user["studentno"]]
+    data = [d for d in get_data() if d["did"] != user["did"]]
     data.append(user)
     with open(csv_path, "w+") as f:
         writer = csv.DictWriter(f, User.__annotations__.keys())
