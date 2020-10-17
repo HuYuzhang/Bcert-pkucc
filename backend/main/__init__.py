@@ -7,9 +7,8 @@ from app import app
 from PyPDF2 import PdfFileReader
 from pprint import pprint
 import pathlib
-import ipfshttpclient
 import traceback
-from .data import User, add_or_update
+from .data import User, add_or_update, get_data
 
 
 # create upload path
@@ -141,6 +140,20 @@ def register_user():
 
     add_or_update(data)
     return "ok"
+
+# Get user info by did
+@app.route("/users/<did>", methods=["get"])
+@cross_origin()
+def get_user(did: str):
+    for user in get_data():
+        if user["did"] == did:
+            return {
+                "name": user["name"],
+                "email": user["email"],
+                "major": user["major"],
+                "degree": user["degree"],
+            }
+    abort(404)
 
 @app.after_request
 def cors(environ):
