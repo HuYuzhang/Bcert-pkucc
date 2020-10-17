@@ -1,5 +1,5 @@
 import { useBSSession } from "src/stores/BlockstackSessionStore";
-import React, { useCallback, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import {
   Collapse,
@@ -8,31 +8,129 @@ import {
   NavbarBrand,
   Nav,
   NavItem,
-  Popover,
-  PopoverBody,
-  Tooltip,
   Button,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  Input,
+  Form,
+  FormGroup,
+  Label,
+  ModalFooter,
 } from "reactstrap";
-import { copy } from "src/utils/copy";
+import { uploadInfoPath } from "src/api";
+import { eciesGetJsonStringLength } from "blockstack/lib/encryption/ec";
 
-const CopyPublicKeyLink: React.FC<{ getPublicKey: () => string }>
-= ({ getPublicKey }) => {
+const formInitialValue = {
+  name: "",
+  email: "",
+  major: "",
+  degree: "",
+};
 
-  const handleClick = useCallback(() => {
-    const key = getPublicKey();
-    const result = copy(key);
-    alert(result ? "复制成功！" : "复制失败！");
-  }, [getPublicKey]);
+type TFormData = {[key in keyof typeof formInitialValue]: string };
+
+const TextInput: React.FC<{
+  field: string;
+  data: TFormData;
+  setData: (d: TFormData) => void;
+  label: string;
+}> = ({ field, setData, label, data }) => {
+  return (
+    <FormGroup>
+      <Label for={field}>
+        {label}
+      </Label>
+      <Input
+        id={field}
+        type="text"
+        value={data[field]}
+        onChange={(e) => setData({ ...data, [field]: e.target.value })}
+      />
+    </FormGroup>
+  );
+};
+
+const InfoModal: React.FC<{
+  open: boolean;
+  toggle: () => void;
+  getPublicKey: () => string;
+  getDid: () => string;
+}> = ({ open, toggle, getPublicKey, getDid  }) => {
+
+  const [data, setData] = useState(formInitialValue);
+
+  const [submitting, setSubmitting] = useState(false);
+
+  const onSubmit = () => {
+    setSubmitting(true);
+    fetch(uploadInfoPath, {
+      method: "POST",
+      body: JSON.stringify({
+        ...data,
+        did: getDid(),
+        public_key: getPublicKey(),
+      }),
+      headers: { "content-type": "application/json" },
+    })
+      .then((d) => {
+        alert("信息发送成功！");
+      })
+      .finally(() => {
+        setSubmitting(false);
+        toggle();
+      });
+
+  };
+
+  return (
+    <Modal isOpen={open} toggle={toggle}>
+      <ModalHeader toggle={toggle}>
+          发送学校账号信息
+      </ModalHeader>
+      <ModalBody>
+        <Form>
+          <TextInput field="name" data={data} setData={setData} label="姓名" />
+          <TextInput field="email" data={data} setData={setData} label="Email" />
+          <TextInput field="major" data={data} setData={setData} label="专业" />
+          <TextInput field="degree" data={data} setData={setData} label="学位" />
+        </Form>
+      </ModalBody>
+      <ModalFooter>
+        <Button onClick={toggle}>
+          关闭
+        </Button>
+        <Button color="primary" onClick={onSubmit} disabled={submitting}>
+          发送
+        </Button>
+      </ModalFooter>
+    </Modal>
+  );
+};
+
+const CopyPublicKeyLink: React.FC<{
+  getPublicKey: () => string;
+  getDid: () => string;
+}>
+= ({ getPublicKey, getDid }) => {
+
+  const [open, setOpen] = useState(false);
 
 
   return (
     <span>
       <Button
         id="copyPublicKey"
-        onClick={handleClick}
+        onClick={() => setOpen(true)}
       >
-        复制公钥
+        绑定学校身份
       </Button>
+      <InfoModal
+        open={open}
+        toggle={() => setOpen((o) => !o)}
+        getPublicKey={getPublicKey}
+        getDid={getDid}
+      />
     </span>
   );
 };
@@ -91,7 +189,10 @@ export const Header: React.FC = () => {
                     </Link>
                   </NavItem>
                   <NavItem>
-                    <CopyPublicKeyLink getPublicKey={getPublicKey} />
+                    <CopyPublicKeyLink
+                      getPublicKey={getPublicKey}
+                      getDid={() => session.loadUserData().username}
+                    />
                   </NavItem>
                   <NavItem>
                     <a className="nav-link pointer" onClick={handleSignOut}>
