@@ -13,7 +13,7 @@ export const Introduction: React.FC = () => {
           </p>
 	    </div>
       </div>
-      <div className="show">
+      <div className="chanpinshow">
 	    <div className="chanpinphoto">
           <p className="step"><br/>1</p>
           <p className="step"><br/>2</p>
