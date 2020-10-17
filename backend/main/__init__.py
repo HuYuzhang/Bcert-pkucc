@@ -124,7 +124,7 @@ ipfs_root = "https://bcert.pku.edu.cn/ipfs"
 
 # Register the user
 @app.route("/users", methods=["post"])
-@cross_origin
+@cross_origin()
 def register_user():
 
     json = request.get_json()
@@ -140,6 +140,7 @@ def register_user():
     )
 
     add_or_update(data)
+    return "ok"
 
 @app.after_request
 def cors(environ):
