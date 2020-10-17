@@ -1,0 +1,11 @@
+.footer {
+  background: #94070A;
+  width: 100%;
+  min-height: 100px;
+}
+
+.footer-item {
+  padding: 32px 0;
+  text-align: center;
+  color: white;
+}
