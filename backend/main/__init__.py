@@ -1,8 +1,7 @@
 from flask import render_template
-from flask import request
+from flask import request, abort
 from blockcert.validate_certificates import validate_certificate,get_issuer_address,get_issuer_verification
 from blockcert import network_utils
-import json
 from flask_cors import *
 from app import app
 from PyPDF2 import PdfFileReader
@@ -10,6 +9,7 @@ from pprint import pprint
 import pathlib
 import ipfshttpclient
 import traceback
+from .data import User, add_or_update
 
 
 # create upload path
@@ -122,13 +122,12 @@ def verify():
 
 ipfs_root = "https://bcert.pku.edu.cn/ipfs"
 
-@app.route("/download/<hash>", methods=["get"])
+# Register the user
+@app.route("/users", methods=["post"])
 @cross_origin
-def download(hash):
-    client = ipfshttpclient.connect(ipfs_root)
-    client.files
-    
-
+def register_user():
+    data: User = request.get_json()
+    add_or_update(data)
 
 @app.after_request
 def cors(environ):
