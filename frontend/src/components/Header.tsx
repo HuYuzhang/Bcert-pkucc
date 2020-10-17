@@ -18,7 +18,7 @@ import {
   Label,
   ModalFooter,
 } from "reactstrap";
-import { uploadInfoPath } from "src/api";
+import { getUserInfoPath, uploadInfoPath } from "src/api";
 import { eciesGetJsonStringLength } from "blockstack/lib/encryption/ec";
 
 const formInitialValue = {
@@ -35,7 +35,8 @@ const TextInput: React.FC<{
   data: TFormData;
   setData: (d: TFormData) => void;
   label: string;
-}> = ({ field, setData, label, data }) => {
+  disabled?: boolean;
+}> = ({ field, setData, label, data, disabled }) => {
   return (
     <FormGroup>
       <Label for={field}>
@@ -46,6 +47,7 @@ const TextInput: React.FC<{
         type="text"
         value={data[field]}
         onChange={(e) => setData({ ...data, [field]: e.target.value })}
+        disabled={disabled}
       />
     </FormGroup>
   );
@@ -58,9 +60,29 @@ const InfoModal: React.FC<{
   getDid: () => string;
 }> = ({ open, toggle, getPublicKey, getDid  }) => {
 
+  const [existingState, setExistingState] =
+    useState<"loading" | "registered" | "unregistered">("loading");
+
+  const loading = existingState === "loading";
+
   const [data, setData] = useState(formInitialValue);
 
   const [submitting, setSubmitting] = useState(false);
+
+  const loadExistingInfo = async () => {
+    const resp = await fetch(getUserInfoPath(getDid()));
+    if (resp.status === 404) {
+      setExistingState("unregistered");
+    } else {
+      setExistingState("registered");
+      const { name, email, major, degree } = await resp.json();
+      setData({ name, email, major, degree });
+    }
+  };
+
+  useEffect(() => {
+    loadExistingInfo();
+  }, []);
 
   const onSubmit = () => {
     setSubmitting(true);
@@ -73,8 +95,9 @@ const InfoModal: React.FC<{
       }),
       headers: { "content-type": "application/json" },
     })
-      .then((d) => {
-        alert("信息发送成功！");
+      .then(() => {
+        alert("身份绑定成功！");
+        loadExistingInfo();
       })
       .finally(() => {
         setSubmitting(false);
@@ -92,11 +115,33 @@ const InfoModal: React.FC<{
         <p>
           在真实系统中，此步将会直接使用学校的身份认证系统确认学生身份以及下列信息。
         </p>
+        <hr />
+        <p>
+          {
+            existingState === "loading"
+              ? "加载现有身份绑定信息中……"
+              : existingState === "registered"
+                ? "您已经绑定以下身份信息，可在下面进行修改。"
+                : "您还未绑定身份信息，请填写以下信息。"
+          }
+        </p>
         <Form>
-          <TextInput field="name" data={data} setData={setData} label="姓名" />
-          <TextInput field="email" data={data} setData={setData} label="Email" />
-          <TextInput field="major" data={data} setData={setData} label="专业" />
-          <TextInput field="degree" data={data} setData={setData} label="学位" />
+          <TextInput
+            disabled={loading} field="name"
+            data={data} setData={setData} label="姓名"
+          />
+          <TextInput
+            disabled={loading} field="email"
+            data={data} setData={setData} label="Email"
+          />
+          <TextInput
+            disabled={loading} field="major"
+            data={data} setData={setData} label="专业"
+          />
+          <TextInput
+            disabled={loading} field="degree"
+            data={data} setData={setData} label="学位"
+          />
         </Form>
       </ModalBody>
       <ModalFooter>
