@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect } from "react";
 import { useAsync } from "react-async";
+import { Helmet } from "react-helmet";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { CenteredTextLayout } from "src/layout/CenteredTextLayout";
 import {
@@ -11,6 +12,7 @@ import {
   isDecryptionFailed,
   saveHashToRemote,
 } from "src/utils/file";
+import { siteName } from "src/utils/helmet";
 
 export const SavePage: React.FC<RouteComponentProps<{ hash: string }>> = ({ match }) => {
 
@@ -58,6 +60,9 @@ export const SavePage: React.FC<RouteComponentProps<{ hash: string }>> = ({ matc
 
   return (
     <CenteredTextLayout>
+      <Helmet>
+        <title>保存文件 - {siteName}</title>
+      </Helmet>
       {
         isLoading
           ? (

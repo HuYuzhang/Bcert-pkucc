@@ -21,6 +21,7 @@
     "react": "^16.13.1",
     "react-async": "^10.0.1",
     "react-dom": "^16.13.1",
+    "react-helmet": "^6.1.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.3",
     "reactstrap": "^8.6.0",
@@ -50,6 +51,7 @@
   },
   "devDependencies": {
     "@types/pdfjs-dist": "^2.1.5",
+    "@types/react-helmet": "^6.1.0",
     "@types/reactstrap": "^8.5.1",
     "@typescript-eslint/eslint-plugin": "^4.4.0",
     "@typescript-eslint/parser": "^4.4.0",
