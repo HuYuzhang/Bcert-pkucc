@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import React, { useState } from "react";
-import { downloadFileFromIPFS, saveHashToRemote } from "src/utils/file";
+import { downloadFileFromIPFS, isDecryptionFailed, saveHashToRemote } from "src/utils/file";
 import { useBSSession } from "src/stores/BlockstackSessionStore";
 import { Label, Input } from "reactstrap";
 import { CertList } from "./CertList";
@@ -29,6 +29,9 @@ export const DownloadCert: React.FC = () => {
 
     } catch (e) {
       console.error(e);
+      if (isDecryptionFailed(e)) {
+        alert("解密文件失败。此文件可能不属于您！");
+      }
     } finally {
       setPreparaingDownload(false);
     }

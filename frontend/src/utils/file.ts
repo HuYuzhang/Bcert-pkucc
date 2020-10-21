@@ -35,6 +35,10 @@ export function downloadBuffer(buffer: Buffer, filename: string) {
   link.click();
 }
 
+export function isDecryptionFailed(e: Error) {
+  return e.message === "Unsupported state or unable to authenticate data";
+}
+
 export async function getCertRecordFromIPFS(hash: string, privateKey: string) {
   // download file
   console.log(`Starting download file ${hash} from IPFS...`);

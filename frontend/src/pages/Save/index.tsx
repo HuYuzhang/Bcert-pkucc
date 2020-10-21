@@ -6,7 +6,11 @@ import {
   useBSSession,
   useHandlingPendingSignInEffect,
 } from "src/stores/BlockstackSessionStore";
-import { getCertRecordFromIPFS, saveHashToRemote } from "src/utils/file";
+import {
+  getCertRecordFromIPFS,
+  isDecryptionFailed,
+  saveHashToRemote,
+} from "src/utils/file";
 
 export const SavePage: React.FC<RouteComponentProps<{ hash: string }>> = ({ match }) => {
 
@@ -17,8 +21,16 @@ export const SavePage: React.FC<RouteComponentProps<{ hash: string }>> = ({ matc
   const { hash } = match.params;
 
   const deferFn = useCallback(async ([hash]) => {
-    const cert = await getCertRecordFromIPFS(hash, session.loadUserData().appPrivateKey);
-    return await saveHashToRemote(session, cert);
+    try {
+      const cert = await getCertRecordFromIPFS(hash,
+        session.loadUserData().appPrivateKey);
+      return await saveHashToRemote(session, cert);
+    } catch (e) {
+      console.log(e);
+      if (isDecryptionFailed(e)) {
+        return "NotOwner";
+      }
+    }
   }, [session, hash]);
 
   const { data, isLoading, run, error } = useAsync({ deferFn });
