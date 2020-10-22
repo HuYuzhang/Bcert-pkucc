@@ -313,19 +313,24 @@ def check_issuer_verification_methods(issuer_address,
 Verify that issuing address exists in the issuer domain.
 Note that the end-user should confirm that the domain is indeed the issuers.
 '''
-def check_url_verification_method(address, results, key, conf, testnet):
+def check_dns_verification_method(address, results, key, conf, testnet):
     try:
-
         domain = conf['url']
-        url = domain + "/cred.txt"
-        cred_txt_file = requests.get(url)
+
+        cmd='dig '+ domain +' any @8.8.8.8'
+        res=os.popen(cmd)
+        f=res.read()
 
         # set domain in results
-        results[key]['url'] = domain
+        results[key]['id'] = domain
 
-        if cred_txt_file.status_code == 200:
-            if address in cred_txt_file.text:
-                results[key]['success'] = True
+        #if f.find(address) !=-1:
+        if address in f:
+            results[key]['success'] = True
+
+        #if cred_txt_file.status_code == 200:
+        #    if address in cred_txt_file.text:
+        #        results[key]['success'] = True
 
     except Exception as e:
         # TODO log error -- print(e)

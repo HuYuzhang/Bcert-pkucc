@@ -356,6 +356,35 @@ def check_block_co_verification_method(address, results, key, conf, testnet):
         # don't break -- ignore result of this thread
         pass
 
+'''
+Verify that issuing address exists in the issuer domain.
+Note that the end-user should confirm that the domain is indeed the issuers.
+'''
+def check_dns_verification_method(address, results, key, conf, testnet):
+    try:
+        domain = conf['url']
+
+        cmd='dig '+ domain +' any @8.8.8.8'
+        res=os.popen(cmd)
+        f=res.read()
+
+        # set domain in results
+        results[key]['id'] = domain
+
+        #if f.find(address) !=-1:
+        if address in f:
+            results[key]['success'] = True
+
+        #if cred_txt_file.status_code == 200:
+        #    if address in cred_txt_file.text:
+        #        results[key]['success'] = True
+
+    except Exception as e:
+        # TODO log error -- print(e)
+
+        # don't break -- ignore result of this thread
+        pass
+
 
 def check_did_verification_method(address, results, key, conf, testnet):
     #print(conf['blockstack'])
