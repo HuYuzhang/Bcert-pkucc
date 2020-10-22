@@ -19,13 +19,10 @@ import {
   ModalFooter,
 } from "reactstrap";
 import { getUserInfoPath, uploadInfoPath } from "src/api";
-import { eciesGetJsonStringLength } from "blockstack/lib/encryption/ec";
 
 const formInitialValue = {
-  name: "",
-  email: "",
-  major: "",
-  degree: "",
+  username: "",
+  password: "",
 };
 
 type TFormData = {[key in keyof typeof formInitialValue]: string };
@@ -60,51 +57,7 @@ const InfoModal: React.FC<{
   getDid: () => string;
 }> = ({ open, toggle, getPublicKey, getDid  }) => {
 
-  const [existingState, setExistingState] =
-    useState<"loading" | "registered" | "unregistered">("loading");
-
-  const loading = existingState === "loading";
-
   const [data, setData] = useState(formInitialValue);
-
-  const [submitting, setSubmitting] = useState(false);
-
-  const loadExistingInfo = async () => {
-    const resp = await fetch(getUserInfoPath(getDid()));
-    if (resp.status === 404) {
-      setExistingState("unregistered");
-    } else {
-      setExistingState("registered");
-      const { name, email, major, degree } = await resp.json();
-      setData({ name, email, major, degree });
-    }
-  };
-
-  useEffect(() => {
-    loadExistingInfo();
-  }, []);
-
-  const onSubmit = () => {
-    setSubmitting(true);
-    fetch(uploadInfoPath, {
-      method: "POST",
-      body: JSON.stringify({
-        ...data,
-        did: getDid(),
-        public_key: getPublicKey(),
-      }),
-      headers: { "content-type": "application/json" },
-    })
-      .then(() => {
-        alert("身份绑定成功！");
-        loadExistingInfo();
-      })
-      .finally(() => {
-        setSubmitting(false);
-        toggle();
-      });
-
-  };
 
   return (
     <Modal isOpen={open} toggle={toggle}>
@@ -113,34 +66,17 @@ const InfoModal: React.FC<{
       </ModalHeader>
       <ModalBody>
         <p>
-          在真实系统中，此步将会直接使用学校的身份认证系统确认学生身份以及下列信息。
+          登录学校身份后，系统将会自动获得学生的ID和学历信息。
         </p>
         <hr />
-        <p>
-          {
-            existingState === "loading"
-              ? "加载现有身份绑定信息中……"
-              : existingState === "registered"
-                ? "您已经绑定以下身份信息，可在下面进行修改。"
-                : "您还未绑定身份信息，请填写以下信息。"
-          }
-        </p>
         <Form>
           <TextInput
-            disabled={loading} field="name"
-            data={data} setData={setData} label="姓名"
+            field="username"
+            data={data} setData={setData} label="学校账号"
           />
           <TextInput
-            disabled={loading} field="email"
-            data={data} setData={setData} label="Email"
-          />
-          <TextInput
-            disabled={loading} field="major"
-            data={data} setData={setData} label="专业"
-          />
-          <TextInput
-            disabled={loading} field="degree"
-            data={data} setData={setData} label="学位"
+            field="password"
+            data={data} setData={setData} label="学校密码"
           />
         </Form>
       </ModalBody>
@@ -148,7 +84,7 @@ const InfoModal: React.FC<{
         <Button onClick={toggle}>
           关闭
         </Button>
-        <Button color="primary" onClick={onSubmit} disabled={submitting}>
+        <Button color="primary" onClick={toggle}>
           绑定
         </Button>
       </ModalFooter>
