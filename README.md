@@ -1,4 +1,4 @@
-#发布证书
+# 发布证书
 
 启动比特币客户端：
 >bitcoin-qt
@@ -15,7 +15,7 @@
 生成发布证书：
 >create-certificates -c PKU_2023_Graduates/config.ini
 
-#验证证书
+# 验证证书
 
 启动btcd
 >cd gopath/bin && ./btcd
@@ -26,7 +26,7 @@
 验证证书：
 >validate-certificates -c PKU_2022_Graduates/config.ini -f /home/jasmine/blockchain-certificates/PKU_2022_Graduates/certificates/123wyz.id.blockstack.pdf
 
-#撤回证书
+# 撤回证书
 
 停止btcd启动比特币：
 >bitcoin-qt
@@ -40,7 +40,7 @@
 撤回颁发地址：
 >revoke-certificates -c PKU_2021_Graduates/config.ini -s
 
-#启动前端
+# 启动前端
 
 启动IPFS、btcd、blockstack
 
