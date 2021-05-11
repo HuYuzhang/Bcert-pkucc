@@ -9,12 +9,16 @@ import datetime
 import configargparse
 import ipfshttpclient
 from pdfrw import PdfReader, PdfWriter, PdfDict
-from .chainpoint import ChainPointV2
-from . import pdf_utils
-from . import publish_hash
-from . import cred_protocol
+# from .chainpoint import ChainPointV2
+# from . import pdf_utils
+# from . import publish_hash
+# from . import cred_protocol
+from chainpoint import ChainPointV2
+import pdf_utils
+import publish_hash
+import cred_protocol
 import ecies
-from .email_helper import send_cert_email
+from email_helper import send_cert_email
 
 
 '''
@@ -80,18 +84,18 @@ def load_config():
     args, _ = p.parse_known_args()
     return args
 
-
 def create_certificates(conf, interactive=False):
+    pdf_utils.populate_pdf_certificates(conf, interactive)
+
+def issue_certificates(conf, interactive=False):
     # check if issuance address has not been revoked!
     # TODO: REVOKE ADDRESS CMD
-
-
-    pdf_utils.populate_pdf_certificates(conf, interactive)
 
     # get certificate file list here (to ensure it is identical to both
     # 'hash_certificates' and 'insert_proof_to_certificates'
     certificates_directory = os.path.join(conf.working_directory, conf.certificates_directory)
     cert_files = glob.glob(certificates_directory + os.path.sep + "*.pdf")
+    
 
     cert_hashes = pdf_utils.hash_certificates(cert_files)
     cp = prepare_chainpoint_tree(cert_hashes)
@@ -145,9 +149,6 @@ def create_certificates(conf, interactive=False):
                 except Exception as e:
                     print(f"发送到{name}（{useremail}）的邮件失败。原因：{e}")
 
-
-
- 
         # os.system('gpg --encrypt --recipient "'+useremail+'" '+c)
         # IPFS_res = client.add(c+'.gpg')['Hash']
         # print(os.path.basename(c),IPFS_res)
@@ -162,10 +163,9 @@ def main():
         sys.exit(1)
 
     conf = load_config()
-    txid = create_certificates(conf, True)
-
-
-    print('\nTx hash: {}'.format(txid))
+    create_certificates(conf, True)
+    # txid = issue_certificates(conf, True)
+    # print('\nTx hash: {}'.format(txid))
 
 
 if __name__ == "__main__":
