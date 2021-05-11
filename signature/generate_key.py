@@ -1,26 +1,11 @@
+from config import load_config
 from bls.scheme import *
-import pickle
 import sys
 import os
 import json
-import configargparse
 from sig_email_helper import send_secret_key_email
 from bplib.bp import G2Elem
 import base64
-
-def load_config():
-    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
-    default_config = os.path.join(base_dir, 'generate_config.ini')
-    default_config = '/Users/jasmine/Documents/Bcert-pkucc/signature/generate_config.ini'
-    p = configargparse.getArgumentParser(default_config_files=[default_config])
-    p.add('-c', '--config', required=False, is_config_file=True, help='config file path')
-    p.add_argument('-d', '--working_directory', type=str, default='.', help='the main working directory - all paths/files are relative to this')
-    p.add_argument('-n', '--signer_num', type=int, default=3, help='the number of all the signers')
-    p.add_argument('-t', '--valid_num', type=int, default=2,help='the number of the needed signer to form a valid signature')
-    p.add_argument('-s', '--signer', type=str, help='the information of all the signers')
-
-    args, _ = p.parse_known_args()
-    return args
 
 def generate(conf):
 
