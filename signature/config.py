@@ -3,6 +3,7 @@ import configargparse
 
 default_config = 'config.ini'
 
+# 统一的读取配置的方法
 def load_config():
     p = configargparse.getArgumentParser(default_config_files=[default_config])
     p.add('-c', '--config', required=False, is_config_file=True, help='config file path')
