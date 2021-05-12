@@ -4,7 +4,6 @@ import sys
 import os
 import json
 from sig_email_helper import send_secret_key_email
-from bplib.bp import G2Elem
 import base64
 
 def generate(conf):

@@ -1,13 +1,8 @@
 from config import load_config
 from bls.scheme import *
-import pickle
 import sys
 import os
-import json
 import glob
-import configargparse
-from sig_email_helper import send_secret_key_email
-from bplib.bp import G2Elem
 import base64
 from pdfrw import PdfReader, PdfWriter, PdfDict
 from petlib.bn import Bn

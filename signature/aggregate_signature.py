@@ -1,11 +1,8 @@
 from config import load_config
 from bls.scheme import *
-import pickle
 import sys
 import os
-import json
 import glob
-import configargparse
 from sig_email_helper import send_secret_key_email
 from bplib.bp import G1Elem, G2Elem
 import base64
