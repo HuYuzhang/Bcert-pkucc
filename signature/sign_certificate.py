@@ -4,6 +4,7 @@ import sys
 import os
 import glob
 import base64
+from tkinter import Tk, simpledialog, filedialog, messagebox
 from pdfrw import PdfReader, PdfWriter, PdfDict
 from petlib.bn import Bn
 
@@ -51,25 +52,40 @@ def sign_pdf(pdfname, sk):
     PdfWriter().write(pdfname, pdf)
 
 
-def sign_certificates(conf):
+def sign_certificates(certificates_dir, secret_key):
     # certificates_directory = '/Users/jasmine/Documents/Bcert-pkucc/blockchain-certificates/pku2021/certificates'
-    certificates_directory = conf.certificates_directory
-    cert_files = glob.glob(certificates_directory + os.path.sep + "*.pdf")  #所有路径+名字的list
-    print(conf.secret_key)
-    print(type(conf.secret_key))
+    cert_files = glob.glob(certificates_dir + os.path.sep + "*.pdf")  #所有路径+名字的list
+    print(secret_key)
+    print(type(secret_key))
     for cert in cert_files:
-        sign_pdf(cert, conf.secret_key)
+        sign_pdf(cert, secret_key)
 
 def main():
-    if sys.version_info.major < 3:
-        sys.stderr.write('Python 3 is required!')
-        sys.exit(1)
-
     conf = load_config()
-    sign_certificates(conf)
+    sign_certificates(conf.certificates_directory, conf.secret_key)
 
     print('sign success!')
 
+def gui():
+    top = Tk()
+    top.withdraw()
+
+    folder: str = filedialog.askdirectory(title="选择证书目录")
+
+    if not folder:
+        return
+
+    secret_key: str = simpledialog.askstring("私钥", "请输入您的私钥")
+
+    if not secret_key:
+        return
+
+    sign_certificates(folder, secret_key)
+
+    messagebox.showinfo("签名成功。", "签名完成。")
+
+
 
 if __name__ == "__main__":
-    main()
+    # main()
+    gui()
